@@ -44,13 +44,13 @@ public class ServiceProduitbous {
             for(Map<String,Object> obj : list){
                 Produitbous t = new Produitbous();
                 t.setId((Integer) obj.get("id"));
-                t.setStore_id((Integer) obj.get("store_id"));
+                t.setStore_id(obj.get("store_id").toString());
                 t.setNom(obj.get("nom").toString());
                 t.setDescription(obj.get("description").toString());
                 t.setCategorie(obj.get("categorie").toString());
                 t.setImage(obj.get("image").toString());
-                t.setPrix((Integer) obj.get("prix"));
-                t.setQte((Integer) obj.get("qteTotal"));
+                t.setPrix(obj.get("prix").toString());
+                t.setQte(obj.get("qteTotal").toString());
 
 
                 produitbous.add(t);
@@ -79,7 +79,8 @@ public class ServiceProduitbous {
     }
 
     public boolean AddProduitbous(Produitbous p){
-        String url = "http://127.0.0.1:8000/general/produitbou/ajouter/bike1/bike1/qsdqsd.jpg/10/12/vélo/1";
+        String img = p .getImage();
+        String url = "http://127.0.0.1:8000/general/produitbou/addproduit/add?store="+p.getStore_id()+"&nom="+p.getNom()+"&description="+p.getDescription()+"&prix="+p.getPrix()+"&qte="+p.getQte()+"&catg="+p.getCategorie()+"&img="+img;
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override

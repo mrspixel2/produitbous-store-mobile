@@ -4,13 +4,13 @@ import java.util.Objects;
 
 public class Produitbous {
 
-    int id,store_id,prix,qte;
-    String nom,description,image,categorie;
+    int id;
+    String prix,qte,store_id,nom,description,image,categorie;
 
     public Produitbous() {
     }
 
-    public Produitbous(int id, int store_id, int prix, int qte, String nom, String description, String image, String categorie) {
+    public Produitbous(int id, String store_id, String prix, String qte, String nom, String description, String image, String categorie) {
         this.id = id;
         this.store_id = store_id;
         this.prix = prix;
@@ -21,7 +21,7 @@ public class Produitbous {
         this.categorie = categorie;
     }
 
-    public Produitbous(int store_id, int prix, int qte, String nom, String description, String image, String categorie) {
+    public Produitbous(String store_id, String prix, String qte, String nom, String description, String image, String categorie) {
         this.store_id = store_id;
         this.prix = prix;
         this.qte = qte;
@@ -39,27 +39,27 @@ public class Produitbous {
         this.id = id;
     }
 
-    public int getStore_id() {
+    public String getStore_id() {
         return store_id;
     }
 
-    public void setStore_id(int store_id) {
+    public void setStore_id(String store_id) {
         this.store_id = store_id;
     }
 
-    public int getPrix() {
+    public String getPrix() {
         return prix;
     }
 
-    public void setPrix(int prix) {
+    public void setPrix(String prix) {
         this.prix = prix;
     }
 
-    public int getQte() {
+    public String getQte() {
         return qte;
     }
 
-    public void setQte(int qte) {
+    public void setQte(String qte) {
         this.qte = qte;
     }
 

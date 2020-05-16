@@ -114,10 +114,18 @@ public class BaseForm extends Form {
         ));
 
         tb.addMaterialCommandToSideMenu("Rechercher un produit", FontImage.MATERIAL_SEARCH, e -> {
-            new AddProduitbousForm(current).show();
+            try {
+                new AddProduitbousForm(current).show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         tb.addMaterialCommandToSideMenu("Ajouter un produit", FontImage.MATERIAL_ADD, e -> {
-            new AddProduitbousForm(current).show();
+            try {
+                new AddProduitbousForm(current).show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         tb.addMaterialCommandToSideMenu("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e -> {
             new HomeForm(res).showBack();
