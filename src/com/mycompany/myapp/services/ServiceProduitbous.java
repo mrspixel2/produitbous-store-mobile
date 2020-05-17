@@ -8,6 +8,7 @@ import com.codename1.io.NetworkManager;
 import com.codename1.ui.events.ActionListener;
 import com.mycompany.myapp.entities.Produitbous;
 import com.mycompany.myapp.entities.Produits;
+import com.mycompany.myapp.entities.Store;
 import com.mycompany.myapp.utils.Statics;
 
 import java.io.IOException;
@@ -42,18 +43,17 @@ public class ServiceProduitbous {
 
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
             for(Map<String,Object> obj : list){
-                Produitbous t = new Produitbous();
-                t.setId((Integer) obj.get("id"));
-                t.setStore_id(obj.get("store_id").toString());
-                t.setNom(obj.get("nom").toString());
-                t.setDescription(obj.get("description").toString());
-                t.setCategorie(obj.get("categorie").toString());
-                t.setImage(obj.get("image").toString());
-                t.setPrix(obj.get("prix").toString());
-                t.setQte(obj.get("qteTotal").toString());
-
-
-                produitbous.add(t);
+                Produitbous p = new Produitbous();
+                float id = Float.parseFloat(obj.get("id").toString());
+                p.setId((int) id);
+                p.setStore_id(obj.get("1").toString());
+                p.setNom(obj.get("nom").toString());
+                p.setDescription(obj.get("description").toString());
+                p.setPrix(obj.get("prix").toString());
+                p.setQte(obj.get("qtetotal").toString());
+                p.setCategorie(obj.get("categorie").toString());
+                p.setImage(obj.get("image").toString());
+                produitbous.add(p);
             }
 
 
@@ -64,7 +64,7 @@ public class ServiceProduitbous {
     }
 
     public ArrayList<Produitbous> getAllProduitbous(){
-        String url ="http://127.0.0.1/general/produitbous";//change this in the future//
+        String url ="http://127.0.0.1/general/produitbous/all/produits";//change this in the future//
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {

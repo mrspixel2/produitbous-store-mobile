@@ -44,7 +44,7 @@ public class ServiceStore {
                 Store t = new Store();
                 float id = Float.parseFloat(obj.get("id").toString());
                 t.setId((int) id);
-                //t.setOwner_id((Integer) obj.get("owner_id"));
+                t.setOwner_id( Integer.parseInt(obj.get("1").toString()));
                 t.setNom(obj.get("nom").toString());
                 t.setDescription(obj.get("description").toString());
 
