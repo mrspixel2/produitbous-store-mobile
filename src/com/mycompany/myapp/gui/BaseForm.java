@@ -114,11 +114,7 @@ public class BaseForm extends Form {
         ));
 
         tb.addMaterialCommandToSideMenu("Rechercher un produit", FontImage.MATERIAL_SEARCH, e -> {
-            try {
-                new AddProduitbousForm(current).show();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            new SearchProduitForm(current,res).show();
         });
         tb.addMaterialCommandToSideMenu("Ajouter un produit", FontImage.MATERIAL_ADD, e -> {
             try {

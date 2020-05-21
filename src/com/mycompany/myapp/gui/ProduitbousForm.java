@@ -4,6 +4,7 @@ import com.codename1.components.ImageViewer;
 import com.codename1.components.ScaleImageLabel;
 import com.codename1.components.SpanLabel;
 import com.codename1.components.ToastBar;
+import com.codename1.io.FileSystemStorage;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.*;
 import com.codename1.ui.plaf.Style;
@@ -110,16 +111,10 @@ public class ProduitbousForm extends BaseForm {
 
         ArrayList<Produitbous> lc = ServiceProduitbous.getInstance().getAllProduitbous();
         for (Produitbous cl : lc) {
-            addButton(Image.createImage(cl.getImage()),cl.getNom(),false,36,36);
+            System.out.println(cl.getImage());
+            addButton(Image.createImage(FileSystemStorage.getInstance().openInputStream(cl.getImage())),cl.getNom()+" : "+cl.getDescription(), true, (int) Double.parseDouble(cl.getPrix()), (int) Double.parseDouble(cl.getQte()),cl);
         }
 
-
-        //add products here
-        addButton(res.getImage("news-item-1.jpg"), "Morbi per tincidunt tellus sit of amet eros laoreet.", false, 26, 32);
-        addButton(res.getImage("news-item-2.jpg"), "Fusce ornare cursus masspretium tortor integer placera.", true, 15, 21);
-        addButton(res.getImage("news-item-3.jpg"), "Maecenas eu risus blanscelerisque massa non amcorpe.", false, 36, 15);
-        addButton(res.getImage("news-item-4.jpg"), "Pellentesque non lorem diam. Proin at ex sollicia.", false, 11, 9);
-        //
     }
 
     private void updateArrowPosition(Button b, Label arrow) {
@@ -167,7 +162,7 @@ public class ProduitbousForm extends BaseForm {
         swipe.addTab("", page1);
     }
 
-    private void addButton(Image img, String title, boolean liked, int likeCount, int commentCount) {
+    private void addButton(Image img, String title, boolean liked, int likeCount, int commentCount,Produitbous p) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
@@ -178,7 +173,7 @@ public class ProduitbousForm extends BaseForm {
         ta.setUIID("NewsTopLine");
         ta.setEditable(false);
 
-        Label likes = new Label(likeCount + " Likes  ", "NewsBottomLine");
+        Label likes = new Label(likeCount + " TND  ", "NewsBottomLine");
         likes.setTextPosition(RIGHT);
         if(!liked) {
             FontImage.setMaterialIcon(likes, FontImage.MATERIAL_FAVORITE);
@@ -188,7 +183,7 @@ public class ProduitbousForm extends BaseForm {
             FontImage heartImage = FontImage.createMaterial(FontImage.MATERIAL_FAVORITE, s);
             likes.setIcon(heartImage);
         }
-        Label comments = new Label(commentCount + " Comments", "NewsBottomLine");
+        Label comments = new Label(commentCount + " Quatité", "NewsBottomLine");
         FontImage.setMaterialIcon(likes, FontImage.MATERIAL_CHAT);
 
 
@@ -198,7 +193,9 @@ public class ProduitbousForm extends BaseForm {
                         BoxLayout.encloseX(likes, comments)
                 ));
         add(cnt);
-        image.addActionListener(e -> ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
+        image.addActionListener(e -> {
+            new DetailProduitbouForm(res,p).show();
+        });
     }
 
     private void bindButtonSelection(Button b, Label arrow) {

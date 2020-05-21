@@ -1,18 +1,25 @@
 package com.mycompany.myapp.gui;
 
 import com.codename1.capture.Capture;
+import com.codename1.components.FloatingActionButton;
 import com.codename1.components.ImageViewer;
 import com.codename1.components.MultiButton;
 import com.codename1.components.ToastBar;
 import com.codename1.io.FileSystemStorage;
 import com.codename1.io.Log;
 import com.codename1.ui.*;
+import static com.codename1.ui.CN1Constants.GALLERY_IMAGE;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.layouts.LayeredLayout;
+import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.spinner.Picker;
+import com.codename1.ui.util.ImageIO;
 import com.codename1.ui.util.Resources;
 import com.mycompany.myapp.entities.Produitbous;
 import com.mycompany.myapp.entities.Store;
@@ -22,65 +29,85 @@ import com.mycompany.myapp.services.ServiceStore;
 import com.mycompany.myapp.services.ServiceTask;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+
+import static com.codename1.ui.CN.openGallery;
 
 public class AddProduitbousForm extends Form{
 
     Resources res;
     private Image img;
     private String imgPath;
+    private String name;
+    Object s ;
 
     public AddProduitbousForm(Form previous) throws IOException {
         setTitle("Add a new task");
         setLayout(BoxLayout.y());
+        FloatingActionButton fab  = FloatingActionButton.createFAB(FontImage.MATERIAL_ADD);
+        RoundBorder rb = (RoundBorder)fab.getUnselectedStyle().getBorder();
+        rb.uiid(true);
 
-        TextField tfName = new TextField("","Nom du produit");
-        TextField tfDescription= new TextField("", "Description");
-        TextField tfPrice= new TextField("", "Prix");
-        TextField tfQuantity= new TextField("", "Quantité");
+        TextComponent tfName = new TextComponent().labelAndHint("Nom");
+        TextComponent tfDescription= new TextComponent().labelAndHint("Description");
+        TextComponent tfPrice = new TextComponent().labelAndHint("Prix");
+        TextComponent tfQuantity= new TextComponent().labelAndHint("Quantité");
         Picker tfCategory = new Picker();
         tfCategory.setType(Display.PICKER_TYPE_STRINGS);
         tfCategory.setStrings("Velo", "Accessoire","Autre");
         tfCategory.setSelectedString("Velo");
         MultiButton store = chooseStore(SignInForm.getId());
         ImageViewer iv = new ImageViewer();
-        Button takeImagefromcamera = new Button("Camera");
-        takeImagefromcamera.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    imgPath = Capture.capturePhoto(Display.getInstance().getDisplayWidth(), -1);
-                    img = Image.createImage(imgPath);
-                    iv.setImage(img);
-                } catch (IOException ex) {
-                    System.out.println(ex);
-                }
 
-            }
-        });
-        Button takeImagefromgallery = new Button("Gallerie");
-        takeImagefromgallery.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                Display.getInstance().openGallery(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ev) {
-                        if (ev != null && ev.getSource() != null) {
-                            String imgpath = (String) ev.getSource();
-                            Image img = null;
-                            try {
-                                img = Image.createImage(FileSystemStorage.getInstance().openInputStream(imgpath));
-                                iv.setImage(img);
-                                imgPath = imgpath;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+        Button avatar = new Button("");
+        avatar.setUIID("InputAvatar");
+        Image defaultAvatar = FontImage.createMaterial(FontImage.MATERIAL_CAMERA, "InputAvatarImage", 8);
+        // Image circleMaskImage = getResources().getImage("circle.png");
+        //defaultAvatar = defaultAvatar.scaled(circleMaskImage.getWidth(), circleMaskImage.getHeight());
+        defaultAvatar = ((FontImage)defaultAvatar).toEncodedImage();
+        //Object circleMask = circleMaskImage.createMask();
+        //defaultAvatar = defaultAvatar.applyMask(circleMask);
+        avatar.setIcon(defaultAvatar);
+        avatar.addActionListener(e -> {
+            if(Dialog.show("Camera or Gallery", "Would you like to use the camera or the gallery for the picture?", "Camera", "Gallery")) {
+                String pic = Capture.capturePhoto();
+                if(pic != null) {
+                    s=pic ;
+                    if (pic != null) {
+                        try {
+                            name = System.currentTimeMillis()+".jpg";
+                            String pathToBeStored = FileSystemStorage.getInstance().getAppHomePath() + name ;
+                            imgPath = pathToBeStored;
+                            img = Image.createImage(pic);
+                            OutputStream os = FileSystemStorage.getInstance().openOutputStream(pathToBeStored);
+                            ImageIO.getImageIO().save(img, os, ImageIO.FORMAT_JPEG, 0.9f);
+                            os.close();
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
                         }
                     }
-                }, Display.GALLERY_IMAGE);
+                    iv.setImage(img);
+                }
+            } else {
+                openGallery(ee -> {
+                    if(ee.getSource() != null) {
+                        s = ee.getSource();
+                        try {
+                            img = Image.createImage(s.toString());
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                        iv.setImage(img);
 
+                    }
+                }, GALLERY_IMAGE);
             }
         });
+
+
+
         Button btnValider = new Button("Ajouter Produit");
 
         btnValider.addActionListener(new ActionListener() {
@@ -91,9 +118,13 @@ public class AddProduitbousForm extends Form{
                 else
                 {
                     try {
+                        System.out.println(avatar.getSelectCommandText()) ;
+                        //String fichernom = System.currentTimeMillis() + ".jpg";
                         Produitbous p = new Produitbous(store.getTextLine1(),tfPrice.getText(),tfQuantity.getText(),tfName.getText(),tfDescription.getText(),imgPath,tfCategory.getText());
-                        if( ServiceProduitbous.getInstance().AddProduitbous(p))
-                            Dialog.show("Success","Connection accepted",new Command("OK"));
+                        if( ServiceProduitbous.getInstance().AddProduitbous(p)){
+                            System.out.println(s.toString());
+                            //ServiceProduitbous.getInstance().rimage(imgPath, name ) ;
+                            Dialog.show("Success","Connection accepted",new Command("OK"));}
                         else
                             Dialog.show("ERROR", "Server error", new Command("OK"));
                     } catch (NumberFormatException e) {
@@ -106,7 +137,7 @@ public class AddProduitbousForm extends Form{
             }
         });
 
-        addAll(tfName,tfDescription,tfPrice,tfQuantity,tfCategory,takeImagefromcamera,takeImagefromgallery,iv, store,btnValider);
+        addAll(tfName,tfDescription,tfPrice,tfQuantity,tfCategory,avatar,iv, store,btnValider);
         getToolbar().addMaterialCommandToLeftBar("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e-> previous.showBack());
 
     }
