@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class StoreForm extends BaseForm {
+public class MyStoresForm extends BaseForm {
 
     private Form current;
     ArrayList<Store> list;
 
 
-    public StoreForm(Resources res,Form previous) {
+    public MyStoresForm(Resources res,Form previous) {
 
         super("Stores", BoxLayout.y());
         Form fo = this;
@@ -41,6 +41,7 @@ public class StoreForm extends BaseForm {
         ArrayList<Store> lc = ServiceStore.getInstance().getAllStore();
         ArrayList<Map<String, Object>> data = new ArrayList<>();
         for (Store cl : lc) {
+            if(cl.getId() == SignInForm.getId())
             data.add(createListEntry(cl.getId() , cl.getNom(), cl.getDescription()));
         }
         DefaultListModel<Map<String, Object>> model = new DefaultListModel<>(data);

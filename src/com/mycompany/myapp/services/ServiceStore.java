@@ -73,6 +73,21 @@ public class ServiceStore {
         return Store;
     }
 
+    public ArrayList<Store> getAllStore1(){
+        String url ="http://127.0.0.1:8000/general/store/all/storee";//change this in the future//
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                Store = parseStore(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return Store;
+    }
+
     public ArrayList<Store> getUserStores(){
         String url = "http://127.0.0.1:8000/general/Store/getUserStores/"+owner_id;
         req.setUrl(url);

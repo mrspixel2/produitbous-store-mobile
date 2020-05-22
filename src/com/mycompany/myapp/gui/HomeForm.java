@@ -47,7 +47,7 @@ public class HomeForm extends BaseForm{
 
         btnConsulterProduits.addActionListener(e-> {
             try {
-                new ProduitbousForm(res,current).show();
+                new ProduitbousForm(res).show();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

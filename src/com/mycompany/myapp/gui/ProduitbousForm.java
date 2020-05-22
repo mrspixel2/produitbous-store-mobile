@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class ProduitbousForm extends BaseForm {
 
-    public ProduitbousForm(Resources res,Form previous) throws IOException {
+    public ProduitbousForm(Resources res) throws IOException {
         super("Produits", BoxLayout.y());
         Toolbar tb = new Toolbar(true);
         setToolbar(tb);

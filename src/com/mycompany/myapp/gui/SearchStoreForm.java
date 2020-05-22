@@ -33,7 +33,9 @@ import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import com.mycompany.myapp.entities.Produitbous;
+import com.mycompany.myapp.entities.Store;
 import com.mycompany.myapp.services.ServiceProduitbous;
+import com.mycompany.myapp.services.ServiceStore;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class SearchProduitForm extends BaseForm {
+public class SearchStoreForm extends BaseForm {
 
     private List<Map<String, String>> recentSearchesList;
     private static final Toolbar.BackCommandPolicy BACK_POLICY = Toolbar.BackCommandPolicy.AS_ARROW;
@@ -58,29 +60,29 @@ public class SearchProduitForm extends BaseForm {
      * @param listings the listing of alternate spellings in case there was an error on the server that wants us to prompt the user
      * for different spellings
      */
-    public SearchProduitForm(boolean back, String errorMessage, List<Map<String, Object>> listings) {
+    public SearchStoreForm(boolean back, String errorMessage, List<Map<String, Object>> listings) {
         current=this;
         setTitle("Home");
         setLayout(BoxLayout.y());
         getToolbar().setTitleCentered(true);
 
-        TextField search = new TextField("", "Search", 20, TextArea.ANY);
+        TextField search = new TextField("", "recherche store", 20, TextArea.ANY);
 
         // the component group gives the buttons and text field that rounded corner iOS look when running on iOS. It does nothing on other platforms by default
         Button go = new Button("Go");
         ComponentGroup gp = ComponentGroup.enclose(search, go);
 
-         go.addActionListener(evt -> {
-             if(search.getText().length() > 1) {
-                 try {
-                     performSearch(search.getText());
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }
-             } else {
-                 Dialog.show("Error", "You need to enter a search string", "OK", null);
-             }
-         });
+        go.addActionListener(evt -> {
+            if(search.getText().length() > 0) {
+                try {
+                    performSearch(search.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Dialog.show("Error", "You need to enter a search string", "OK", null);
+            }
+        });
 
 
         // we place the other elements in the box Y layout so they are one on top of the other
@@ -96,11 +98,11 @@ public class SearchProduitForm extends BaseForm {
     void performSearch(final String text) throws IOException {
 
         Form searchResults = new Form("Searching...", new BoxLayout(BoxLayout.Y_AXIS));
-        ArrayList<Produitbous> lc = ServiceProduitbous.getInstance().getAllProduitbous();
-        for (Produitbous cl : lc) {
+        ArrayList<Store> lc = ServiceStore.getInstance().getAllStore1();
+        for (Store cl : lc) {
             System.out.println(similarity(cl.getNom(),text));
             if(similarity(cl.getNom(),text) >= 0.3)
-            addButton(Image.createImage(FileSystemStorage.getInstance().openInputStream(cl.getImage())),cl.getNom()+" : "+cl.getDescription(), true, (int) Double.parseDouble(cl.getPrix()), (int) Double.parseDouble(cl.getQte()),cl,searchResults);
+                addButton(cl.getNom()+" : "+cl.getDescription(),searchResults,cl);
         }
         getToolbar().addMaterialCommandToLeftBar("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e-> new SearchProduitForm(true, null, null).showBack());
         searchResults.show();
@@ -108,6 +110,26 @@ public class SearchProduitForm extends BaseForm {
     }
 
 
+
+    private void addButton(String title,Form f,Store s) {
+        Button image = new Button();
+        Container cnt = BorderLayout.west(image);
+        cnt.setLeadComponent(image);
+        TextArea ta = new TextArea(title);
+        ta.setUIID("NewsTopLine");
+        ta.setEditable(false);
+
+        cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(ta));
+        f.add(cnt);
+        image.addActionListener(e -> {
+            try {
+                selectedStore(s);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+    }
 
     private void addButton(Image img, String title, boolean liked, int likeCount, int commentCount, Produitbous p,Form f) {
         int height = Display.getInstance().convertToPixels(11.5f);
@@ -143,6 +165,19 @@ public class SearchProduitForm extends BaseForm {
         image.addActionListener(e -> {
             new DetailProduitbouForm(res,p).show();
         });
+    }
+
+    void selectedStore(Store s) throws IOException {
+        Form results = new Form("Searching...", new BoxLayout(BoxLayout.Y_AXIS));
+        ArrayList<Produitbous> lc = ServiceProduitbous.getInstance().getAllProduitbous();
+        for (Produitbous cl : lc) {
+            System.out.println("le id de store du produit : "+cl.getStore_id());
+            System.out.println("le id de store : "+s.getId());
+            if(cl.getStore_id().equals(Integer.toString(s.getId())))
+            addButton(Image.createImage(FileSystemStorage.getInstance().openInputStream(cl.getImage())),cl.getNom()+" : "+cl.getDescription(), true, (int) Double.parseDouble(cl.getPrix()), (int) Double.parseDouble(cl.getQte()),cl,results);
+        }
+        getToolbar().addMaterialCommandToLeftBar("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e-> new SearchProduitForm(true, null, null).showBack());
+        results.show();
     }
 
     /**

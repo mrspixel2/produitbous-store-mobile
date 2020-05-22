@@ -7,6 +7,8 @@ import com.codename1.components.MultiButton;
 import com.codename1.components.ToastBar;
 import com.codename1.io.FileSystemStorage;
 import com.codename1.io.Log;
+import com.codename1.push.Push;
+import com.codename1.push.PushContent;
 import com.codename1.ui.*;
 import static com.codename1.ui.CN1Constants.GALLERY_IMAGE;
 import com.codename1.ui.events.ActionEvent;
@@ -196,6 +198,15 @@ public class AddProduitbousForm extends Form{
             d.showPopupDialog(b);
         });
         return b;
+    }
+
+    public void push(String message) {
+        PushContent content = PushContent.get();
+        if (content != null) {
+            String imageUrl = content.getImageUrl();
+            // The image attachment URL in the push notification
+            // or `null` if there was no image attachment.
+        }
     }
 
 }

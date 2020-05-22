@@ -114,7 +114,7 @@ public class ServiceProduitbous {
 
 
     public ArrayList<Produitbous> SearchProduitbous(String key){
-        String url ="http://127.0.0.1:8000/general/produitbous"+key;//change this in the future//
+        String url ="http://127.0.0.1:8000/general/produitbou/search/produit?nom="+key;//change this in the future//
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {

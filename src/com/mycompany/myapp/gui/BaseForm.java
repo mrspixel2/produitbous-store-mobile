@@ -114,7 +114,7 @@ public class BaseForm extends Form {
         ));
 
         tb.addMaterialCommandToSideMenu("Rechercher un produit", FontImage.MATERIAL_SEARCH, e -> {
-            new SearchProduitForm(current,res).show();
+            new SearchProduitForm(false, null, null).show();
         });
         tb.addMaterialCommandToSideMenu("Ajouter un produit", FontImage.MATERIAL_ADD, e -> {
             try {
@@ -147,9 +147,13 @@ public class BaseForm extends Form {
         ));
 
         tb.addMaterialCommandToSideMenu("Rechercher un Store", FontImage.MATERIAL_SEARCH, e -> {
+            new SearchStoreForm(false, null, null).show();
         });
         tb.addMaterialCommandToSideMenu("Ajouter un Store", FontImage.MATERIAL_ADD, e -> {
             new AddStoreForm(current,res).show();
+        });
+        tb.addMaterialCommandToSideMenu("Consulter mes stores", FontImage.MATERIAL_ADD, e -> {
+            new MyStoresForm(res,current).show();
         });
         tb.addMaterialCommandToSideMenu("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e -> {
             new HomeForm(res);

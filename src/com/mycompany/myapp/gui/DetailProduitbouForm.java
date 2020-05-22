@@ -20,13 +20,19 @@ import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.util.Resources;
 import com.mycompany.myapp.entities.Produitbous;
+import com.mycompany.myapp.entities.Rating;
+import com.mycompany.myapp.entities.RatingWidget;
+import com.mycompany.myapp.services.ServiceRating;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetailProduitbouForm extends BaseForm{
     Form current;
     EncodedImage enim;
     Image img;
+    int owner_id = SignInForm.getId();
 
     public DetailProduitbouForm(Resources res, Produitbous evt){
         super("Newsfeed", BoxLayout.y());
@@ -35,7 +41,7 @@ public class DetailProduitbouForm extends BaseForm{
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
-                    new ProduitbousForm(res, current).showBack();
+                    new ProduitbousForm(res).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -54,6 +60,7 @@ public class DetailProduitbouForm extends BaseForm{
         Label date=new Label("Prix : "+evt.getPrix());
         Label nbrmax=new Label("Quantité : "+evt.getQte());
         Label nbr =new Label("Categorie : "+evt.getCategorie());
+        RatingWidget ratingwidget = new RatingWidget();
 
 
         try {
@@ -62,6 +69,7 @@ public class DetailProduitbouForm extends BaseForm{
             img = Image.createImage(FileSystemStorage.getInstance().openInputStream(evt.getImage()));
 
             add(img);
+            add(ratingwidget.createRatedStarRankSlider(evt));
             add(titre);
             add(desc);
             add(date);
@@ -72,11 +80,6 @@ public class DetailProduitbouForm extends BaseForm{
         } catch (IOException ex) {
 
         }
-
-
-
-
-
 
 
         LocalNotification n = new LocalNotification();
@@ -101,69 +104,33 @@ public class DetailProduitbouForm extends BaseForm{
         back.requestFocus();
         back.addActionListener(e -> {
             try {
-                new ProduitbousForm(res,current).showBack();
+                new ProduitbousForm(res).show();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         });
         comt.addActionListener(e -> {
-            // block this from happening twice
-            Preferences.set("alreadyRated", true);
-            InteractionDialog id = new InteractionDialog("Please Rate "  + Display.getInstance().getProperty("AppName", "The App"));
-            int height = id.getPreferredH();
-            Form f = Display.getInstance().getCurrent();
-            id.setLayout(new BorderLayout());
-            Slider rate = createStarRankSlider();
-            Button ok = new Button("OK");
-            Button no = new Button("No Thanks");
-            id.add(BorderLayout.CENTER, FlowLayout.encloseCenterMiddle(rate)).
-                    add(BorderLayout.SOUTH, GridLayout.encloseIn(2, no, ok));
-            id.show(f.getHeight()  - height - f.getTitleArea().getHeight(), 0, 0, 0);
-            no.addActionListener(ex -> id.dispose());
-            ok.addActionListener(exx -> {
-                id.dispose();
-                if(rate.getProgress() >= 9) {
-                    if(Dialog.show("Rate On Store", "Would you mind rating us in the appstore?", "Go To Store", "Dismiss")) {
-
-                    }
-                } else {
-                    if(Dialog.show("Tell Us Why?", "Would you mind writing us a short message explaining how we can improve?", "Write", "Dismiss")) {
-                        Message m = new Message("Heres how you can improve  " + Display.getInstance().getProperty("AppName", "the app"));
-
-                    }
+            RatingWidget r = new RatingWidget();
+            Dialog d = new Dialog("Noter ce Produit");
+            d.setLayout(BoxLayout.yCenter());
+            Container flowLayout = FlowLayout.encloseIn(r.createStarRankSlider());
+            d.add(flowLayout);
+            Button sb = new Button("submit");
+            sb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ex) {
+                    Rating rating = new Rating(owner_id,evt.getId(),r.a);
+                    ServiceRating.getInstance().AddRank(rating);
+                    Dialog.show("Succes", "added rank", new Command("OK"));
+                    new DetailProduitbouForm(res,evt).show();
                 }
             });
+            d.add(sb);
+            d.show(getHeight() / 2, 0, 0, 0);
         });
         add(comt);
         add(pan);
         add(back);
-    }
-
-    private void initStarRankStyle(Style s, Image star) {
-        s.setBackgroundType(Style.BACKGROUND_IMAGE_TILE_BOTH);
-        s.setBorder(Border.createEmpty());
-        s.setBgImage(star);
-        s.setBgTransparency(0);
-    }
-
-    private Slider createStarRankSlider() {
-        Slider starRank = new Slider();
-        starRank.setEditable(true);
-        starRank.setMinValue(0);
-        starRank.setMaxValue(10);
-        Font fnt = Font.createTrueTypeFont("native:MainLight", "native:MainLight").
-                derive(Display.getInstance().convertToPixels(5, true), Font.STYLE_PLAIN);
-        Style s = new Style(0xffff33, 0, fnt, (byte)0);
-        Image fullStar = FontImage.createMaterial(FontImage.MATERIAL_STAR, s).toImage();
-        s.setOpacity(100);
-        s.setFgColor(0);
-        Image emptyStar = FontImage.createMaterial(FontImage.MATERIAL_STAR, s).toImage();
-        initStarRankStyle(starRank.getSliderEmptySelectedStyle(), emptyStar);
-        initStarRankStyle(starRank.getSliderEmptyUnselectedStyle(), emptyStar);
-        initStarRankStyle(starRank.getSliderFullSelectedStyle(), fullStar);
-        initStarRankStyle(starRank.getSliderFullUnselectedStyle(), fullStar);
-        starRank.setPreferredSize(new Dimension(fullStar.getWidth() * 5, fullStar.getHeight()));
-        return starRank;
     }
 
 }
