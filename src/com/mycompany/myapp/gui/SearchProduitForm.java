@@ -85,7 +85,7 @@ public class SearchProduitForm extends BaseForm {
 
         // we place the other elements in the box Y layout so they are one on top of the other
         Container boxY = BoxLayout.encloseY(
-                new SpanLabel("Use the form below to search for houses to buy. You can search by place-name, postcode, or click 'My Location', to search in your current location!"),
+                new SpanLabel("Entrer le nom du produit"),
                 gp);
         add(boxY);
 

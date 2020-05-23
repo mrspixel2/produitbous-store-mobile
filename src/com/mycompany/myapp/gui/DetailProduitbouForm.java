@@ -37,18 +37,13 @@ public class DetailProduitbouForm extends BaseForm{
     public DetailProduitbouForm(Resources res, Produitbous evt){
         super("Newsfeed", BoxLayout.y());
         Container c1=new Container();
-        getToolbar().addMaterialCommandToRightBar("", FontImage.MATERIAL_ARROW_LEFT, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    new ProduitbousForm(res).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        getToolbar().addMaterialCommandToRightBar("", FontImage.MATERIAL_ARROW_LEFT, e-> {
+            try {
+                new ProduitbousForm(res);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
-
-
         try {
             enim=EncodedImage.create("/giphy.gif");
         } catch (IOException ex) {
@@ -61,6 +56,7 @@ public class DetailProduitbouForm extends BaseForm{
         Label nbrmax=new Label("Quantité : "+evt.getQte());
         Label nbr =new Label("Categorie : "+evt.getCategorie());
         RatingWidget ratingwidget = new RatingWidget();
+        c1.add(ratingwidget.createRatedStarRankSlider(evt));
 
 
         try {
@@ -69,7 +65,7 @@ public class DetailProduitbouForm extends BaseForm{
             img = Image.createImage(FileSystemStorage.getInstance().openInputStream(evt.getImage()));
 
             add(img);
-            add(ratingwidget.createRatedStarRankSlider(evt));
+            add(c1);
             add(titre);
             add(desc);
             add(date);

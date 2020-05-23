@@ -156,7 +156,7 @@ public class BaseForm extends Form {
             new MyStoresForm(res,current).show();
         });
         tb.addMaterialCommandToSideMenu("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e -> {
-            new HomeForm(res);
+            new HomeForm(res).showBack();
         });
     }
 

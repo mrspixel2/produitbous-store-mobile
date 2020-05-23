@@ -77,31 +77,31 @@ public class ProduitbousForm extends BaseForm {
         add(LayeredLayout.encloseIn(swipe, radioContainer));
 
         ButtonGroup barGroup = new ButtonGroup();
-        RadioButton all = RadioButton.createToggle("All", barGroup);
-        all.setUIID("SelectBar");
-        RadioButton featured = RadioButton.createToggle("Featured", barGroup);
-        featured.setUIID("SelectBar");
-        RadioButton popular = RadioButton.createToggle("Popular", barGroup);
-        popular.setUIID("SelectBar");
-        RadioButton myFavorite = RadioButton.createToggle("My Favorites", barGroup);
-        myFavorite.setUIID("SelectBar");
+        RadioButton Tous = RadioButton.createToggle("Tous", barGroup);
+        Tous.setUIID("SelectBar");
+        RadioButton Prix = RadioButton.createToggle("Filtrer par Prix", barGroup);
+        Prix.setUIID("SelectBar");
+        RadioButton Bikes = RadioButton.createToggle("Velo", barGroup);
+        Bikes.setUIID("SelectBar");
+        RadioButton Gears = RadioButton.createToggle("Accessoires", barGroup);
+        Gears.setUIID("SelectBar");
         Label arrow = new Label(res.getImage("news-tab-down-arrow.png"), "Container");
 
         add(LayeredLayout.encloseIn(
-                GridLayout.encloseIn(4, all, featured, popular, myFavorite),
+                GridLayout.encloseIn(4, Tous,Prix,Bikes,Gears),
                 FlowLayout.encloseBottom(arrow)
         ));
 
-        all.setSelected(true);
+        Tous.setSelected(true);
         arrow.setVisible(false);
         addShowListener(e -> {
             arrow.setVisible(true);
-            updateArrowPosition(all, arrow);
+            updateArrowPosition(Tous, arrow);
         });
-        bindButtonSelection(all, arrow);
-        bindButtonSelection(featured, arrow);
-        bindButtonSelection(popular, arrow);
-        bindButtonSelection(myFavorite, arrow);
+        bindButtonSelection(Tous, arrow);
+        bindButtonSelection(Prix, arrow);
+        bindButtonSelection(Bikes, arrow);
+        bindButtonSelection(Gears, arrow);
 
         // special case for rotation
         addOrientationListener(e -> {
