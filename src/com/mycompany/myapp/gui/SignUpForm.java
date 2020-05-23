@@ -20,17 +20,13 @@
 package com.mycompany.myapp.gui;
 
 import com.codename1.components.FloatingHint;
-import com.codename1.ui.Button;
-import com.codename1.ui.Container;
-import com.codename1.ui.Display;
-import com.codename1.ui.Form;
-import com.codename1.ui.Label;
-import com.codename1.ui.TextField;
-import com.codename1.ui.Toolbar;
+import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.util.Resources;
+import com.mycompany.myapp.entities.User;
+import com.mycompany.myapp.services.ServiceRegister;
 
 /**
  * Signup UI
@@ -81,7 +77,18 @@ public class SignUpForm extends BaseForm {
                 FlowLayout.encloseCenter(alreadHaveAnAccount, signIn)
         ));
         next.requestFocus();
-        next.addActionListener(e -> new ActivateForm(res).show());
+        next.addActionListener(e -> {
+            if(password.getText().equals(confirmPassword.getText())) {
+                User u = new User(username.getText(), email.getText(), password.getText());
+                if (ServiceRegister.getInstance().inscri(u)) {
+                    Dialog.show("Bravo", "Inscription reussi , merci de vous connecter", "ok", null);
+                    new SignInForm().show();
+                } else {
+                    Dialog.show("Erreur", "verifier vos champs", "ok", null);
+                }
+            }
+        });
     }
+
     
 }
