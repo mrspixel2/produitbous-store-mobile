@@ -13,16 +13,15 @@ import com.codename1.ui.*;
 import static com.codename1.ui.CN1Constants.GALLERY_IMAGE;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
-import com.codename1.ui.layouts.BorderLayout;
-import com.codename1.ui.layouts.BoxLayout;
-import com.codename1.ui.layouts.FlowLayout;
-import com.codename1.ui.layouts.LayeredLayout;
+import com.codename1.ui.layouts.*;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.ImageIO;
 import com.codename1.ui.util.Resources;
+import com.codename1.ui.validation.NumericConstraint;
+import com.codename1.ui.validation.Validator;
 import com.mycompany.myapp.entities.Produitbous;
 import com.mycompany.myapp.entities.Store;
 import com.mycompany.myapp.entities.Task;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 
 import static com.codename1.ui.CN.openGallery;
 
-public class AddProduitbousForm extends Form{
+public class AddProduitbousForm extends BaseForm{
 
     Resources res;
     private Image img;
@@ -45,7 +44,8 @@ public class AddProduitbousForm extends Form{
     Object s ;
 
     public AddProduitbousForm(Form previous) throws IOException {
-        setTitle("Add a new task");
+        TextModeLayout tl = new TextModeLayout(3, 2);
+        setTitle("Add a new product");
         setLayout(BoxLayout.y());
         FloatingActionButton fab  = FloatingActionButton.createFAB(FontImage.MATERIAL_ADD);
         RoundBorder rb = (RoundBorder)fab.getUnselectedStyle().getBorder();
@@ -61,6 +61,9 @@ public class AddProduitbousForm extends Form{
         tfCategory.setSelectedString("Velo");
         MultiButton store = chooseStore(SignInForm.getId());
         ImageViewer iv = new ImageViewer();
+        Validator val = new Validator();
+        val.addConstraint(tfPrice,new NumericConstraint(true));
+        val.addConstraint(tfQuantity,new NumericConstraint(true));
 
         Button avatar = new Button("");
         avatar.setUIID("InputAvatar");
@@ -119,18 +122,23 @@ public class AddProduitbousForm extends Form{
                     Dialog.show("Alert", "Please fill all the fields", new Command("OK"));
                 else
                 {
-                    try {
-                        System.out.println(avatar.getSelectCommandText()) ;
-                        //String fichernom = System.currentTimeMillis() + ".jpg";
-                        Produitbous p = new Produitbous(store.getTextLine1(),tfPrice.getText(),tfQuantity.getText(),tfName.getText(),tfDescription.getText(),imgPath,tfCategory.getText());
-                        if( ServiceProduitbous.getInstance().AddProduitbous(p)){
-                            System.out.println(s.toString());
-                            //ServiceProduitbous.getInstance().rimage(imgPath, name ) ;
-                            Dialog.show("Success","Connection accepted",new Command("OK"));}
-                        else
-                            Dialog.show("ERROR", "Server error", new Command("OK"));
-                    } catch (NumberFormatException e) {
-                        Dialog.show("ERROR", "Status must be a number", new Command("OK"));
+                    if(isValid(tfPrice.getText()) && isValid(tfQuantity.getText())) {
+                        try {
+                            System.out.println(avatar.getSelectCommandText());
+                            //String fichernom = System.currentTimeMillis() + ".jpg";
+                            Produitbous p = new Produitbous(store.getTextLine1(), tfPrice.getText(), tfQuantity.getText(), tfName.getText(), tfDescription.getText(), imgPath, tfCategory.getText());
+                            if (ServiceProduitbous.getInstance().AddProduitbous(p)) {
+                                System.out.println(s.toString());
+                                //ServiceProduitbous.getInstance().rimage(imgPath, name ) ;
+                                Dialog.show("Success", "Connection accepted", new Command("OK"));
+                            } else
+                                Dialog.show("ERROR", "Server error", new Command("OK"));
+                        } catch (NumberFormatException e) {
+                            Dialog.show("ERROR", "Status must be a number", new Command("OK"));
+                        }
+                    }else
+                    {
+                        Dialog.show("ERROR", "Prix et Quantité doit etre un nombre", new Command("OK"));
                     }
 
                 }
@@ -139,9 +147,29 @@ public class AddProduitbousForm extends Form{
             }
         });
 
-        addAll(tfName,tfDescription,tfPrice,tfQuantity,tfCategory,avatar,iv, store,btnValider);
+        add(tfName);
+        add(tfDescription);
+        add(tfPrice);
+        add(tfQuantity);
+        add(tfCategory);
+        add(avatar);
+        add(iv);
+        add(store);
+        add(btnValider);
         getToolbar().addMaterialCommandToLeftBar("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e-> previous.showBack());
 
+    }
+
+    public  boolean isValid(Object value) {
+        String v = (String)value;
+        for(int i = 0 ; i < v.length() ; i++) {
+            char c = v.charAt(i);
+            if(c >= '0' && c <= '9') {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
 
     private void setImage(String filePath, ImageViewer iv) {

@@ -53,7 +53,11 @@ public class HomeForm extends BaseForm{
             }
         });
         btnConsulterStores.addActionListener(e-> {
-            new StoreForm(res,current).show();
+            try {
+                new StoreForm(res).show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         c.addAll(btnConsulterProduits,btnConsulterStores);
         add(c);

@@ -65,6 +65,13 @@ public class SearchStoreForm extends BaseForm {
         setTitle("Home");
         setLayout(BoxLayout.y());
         getToolbar().setTitleCentered(true);
+        getToolbar().addMaterialCommandToLeftBar("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e-> {
+            try {
+                new StoreForm(res);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         TextField search = new TextField("", "recherche store", 20, TextArea.ANY);
 

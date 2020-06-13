@@ -2,8 +2,11 @@
 
 <resource majorVersion="1" minorVersion="10" useXmlUI="false">
     <image name="activation-background.jpg"  />
+    <image name="bike 2.jpg"  />
+    <image name="bike 3.jpg"  />
     <image name="bike.jpg"  />
     <image name="confirmation-background.jpg"  />
+    <image name="default-user.png"  />
     <image name="dog.jpg"  />
     <image name="facebook-logo.png" type="multi"  />
     <image name="Logo.png" type="multi"  />

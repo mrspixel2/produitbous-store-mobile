@@ -143,7 +143,7 @@ public class BaseForm extends Form {
         tb.addComponentToSideMenu(LayeredLayout.encloseIn(
                 sl,
                 FlowLayout.encloseCenterBottom(
-                        new Label(res.getImage("profile-pic.jpg"), "PictureWhiteBackgrond"))
+                        new Label(res.getImage("default-user.png"), "PictureWhiteBackgrond"))
         ));
 
         tb.addMaterialCommandToSideMenu("Rechercher un Store", FontImage.MATERIAL_SEARCH, e -> {
@@ -153,7 +153,11 @@ public class BaseForm extends Form {
             new AddStoreForm(current,res).show();
         });
         tb.addMaterialCommandToSideMenu("Consulter mes stores", FontImage.MATERIAL_ADD, e -> {
-            new MyStoresForm(res,current).show();
+            try {
+                new MyStoresForm(res).show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         tb.addMaterialCommandToSideMenu("retour", FontImage.MATERIAL_KEYBOARD_RETURN, e -> {
             new HomeForm(res).showBack();

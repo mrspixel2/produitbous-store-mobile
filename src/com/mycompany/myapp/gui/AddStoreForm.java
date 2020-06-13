@@ -16,6 +16,8 @@ import com.mycompany.myapp.entities.Task;
 import com.mycompany.myapp.services.ServiceStore;
 import com.mycompany.myapp.services.ServiceTask;
 
+import java.io.IOException;
+
 /**
  *
  * @author bhk
@@ -55,7 +57,13 @@ public class AddStoreForm extends BaseForm{
 
         addAll(tfNom,tfDescription,btnValider);
 
-        getToolbar().addMaterialCommandToLeftBar("Back", FontImage.MATERIAL_ARROW_BACK, e-> new StoreForm(res, previous).show());
+        getToolbar().addMaterialCommandToLeftBar("Back", FontImage.MATERIAL_ARROW_BACK, e-> {
+            try {
+                new StoreForm(res).show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
     }
 
 

@@ -35,8 +35,8 @@ public class ProduitbousForm extends BaseForm {
 
         Label spacer1 = new Label();
         Label spacer2 = new Label();
-        addTab(swipe, res.getImage("news-item.jpg"), spacer1, "15 Likes  ", "85 Comments", "Integer ut placerat purued non dignissim neque. ");
-        addTab(swipe, res.getImage("dog.jpg"), spacer2, "100 Likes  ", "66 Comments", "Dogs are cute: story at 11");
+        addTab(swipe, res.getImage("bike 2.jpg"), spacer1, "Prix: 100dt  ", "Vélo", "un vélo pour les amoureux de la nature. ");
+        addTab(swipe, res.getImage("bike 3.jpg"), spacer2, "Prix: 90dt  ", "Vélo", "un vélo pour les sportifs.");
 
         swipe.setUIID("Container");
         swipe.getContentPane().setUIID("Container");
